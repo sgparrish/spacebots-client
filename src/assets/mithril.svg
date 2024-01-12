@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   viewBox="0 0 24 24"
+   version="1.1"
+   id="svg4"
+   sodipodi:docname="mithril.svg"
+   inkscape:version="1.2.2 (732a01da63, 2022-12-09)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs8">
+    <inkscape:path-effect
+       effect="offset"
+       id="path-effect12522"
+       is_visible="true"
+       lpeversion="1.2"
+       linejoin_type="miter"
+       unit="mm"
+       offset="0.1"
+       miter_limit="4"
+       attempt_force_join="false"
+       update_on_knot_move="true" />
+  </defs>
+  <sodipodi:namedview
+     id="namedview6"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="15.129139"
+     inkscape:cx="6.345371"
+     inkscape:cy="20.027577"
+     inkscape:window-width="2560"
+     inkscape:window-height="1369"
+     inkscape:window-x="1432"
+     inkscape:window-y="1122"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg4" />
+  <path
+     id="path1258"
+     d="M 12 2 C 6.4771585 2 2 6.4771575 2 12 C 2 17.522841 6.4771585 22 12 22 C 17.522841 22 22 17.522841 22 12 C 22 6.4771575 17.522841 2 12 2 z M 5.4824219 7.140625 L 7.4960938 7.140625 L 10.345703 13.617188 C 10.389305 13.715503 10.395473 13.757377 10.433594 13.847656 C 10.463227 13.776668 10.509092 13.647987 10.535156 13.589844 L 13.443359 7.140625 L 15.378906 7.140625 L 15.378906 16.859375 L 13.576172 16.859375 L 13.576172 10.914062 L 10.933594 16.859375 L 9.9296875 16.859375 L 7.2539062 10.876953 L 7.2539062 16.859375 L 5.4824219 16.859375 L 5.4824219 7.140625 z M 17.546875 7.9160156 C 17.806158 7.9160156 18.037938 8.0119074 18.222656 8.1933594 C 18.221489 8.1922564 18.221877 8.190554 18.220703 8.1894531 L 18.230469 8.1972656 C 18.22828 8.1950765 18.224859 8.1955232 18.222656 8.1933594 C 18.422379 8.3821517 18.517578 8.6017976 18.517578 8.8789062 C 18.517578 9.1553887 18.4227 9.3705374 18.226562 9.5605469 C 18.045076 9.7420997 17.80925 9.8378906 17.546875 9.8378906 C 17.289823 9.8378906 17.058309 9.7456939 16.873047 9.5664062 C 16.671345 9.3712125 16.589844 9.1498064 16.589844 8.8789062 C 16.589844 8.6080062 16.673362 8.3866007 16.873047 8.1933594 C 17.052426 8.0139066 17.285911 7.9160156 17.546875 7.9160156 z M 16.708984 10.501953 L 18.363281 10.501953 L 18.363281 16.859375 L 16.708984 16.859375 L 16.708984 10.501953 z " />
+</svg>
