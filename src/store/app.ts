@@ -10,6 +10,7 @@ import {
   Fleet,
   PostFleetTransferBody,
   PostFleetTransferToStationBody,
+  MarketData,
 } from '@/api'
 import {
   getResourceColor,
@@ -40,12 +41,13 @@ export const useAppStore = defineStore('app', {
     loadingFleets: new Set<string>(),
   }),
   actions: {
-    initialFetch() {
+    async initialFetch() {
       this.fetchUser()
-      this.fetchMyFleets()
-      this.fetchSystems()
       this.fetchResources()
       this.fetchShipTypes()
+      const fleets = await this.fetchMyFleets()
+      const systemIds = new Set(fleets?.filter((f) => f.locationSystemId !== null).map((f) => f.locationSystemId))
+      this.fetchSystems(Array.from(systemIds as Set<string>))
     },
     async fetchUser() {
       try {
@@ -62,10 +64,10 @@ export const useAppStore = defineStore('app', {
         /* empty */
       }
     },
-    async fetchSystems(startSystemId: string = firstSystem, maxDepth: number = 5) {
+    async fetchSystems(systemIds: string[] = [firstSystem], maxDepth: number = 5) {
       this.systems = new Map<string, System>()
 
-      const queue = [{ id: startSystemId, depth: 0 }]
+      const queue = systemIds.map((id) => ({ id, depth: 0 }))
       const requested = new Set<string>()
 
       let timeoutId = 0
@@ -118,6 +120,7 @@ export const useAppStore = defineStore('app', {
         const fleets = await SB_API.GetMyFleets()
         this.fleets = new Map(fleets.map((f) => [f.id, f]))
         fleets.forEach(this.scheduleFleetRefreshIfNeeded)
+        return fleets
       } catch (ex) {
         /* empty */
       }
@@ -195,6 +198,23 @@ export const useAppStore = defineStore('app', {
       }
     },
 
+    async fetchMarketData(systemId: string) {
+      try {
+        const rawMarketData = await Promise.all(
+          this.getResources.map((r) => SB_API.GetSystemMarketData(systemId, r.id)),
+        )
+        const marketData: { [key: string]: MarketData } = {}
+        this.getResources.forEach((r, i) => {
+          marketData[r.id] = rawMarketData[i]
+        })
+        // TODO: save this in store somewhere?
+        return marketData
+      } catch (ex) {
+        /* empty */
+      }
+      return {}
+    },
+
     scheduleFleetRefreshIfNeeded(fleet: Fleet) {
       if (fleet.currentAction !== null) {
         const timeStamp = fleet.currentAction.arrivalTime || fleet.currentAction.finishTime
@@ -210,7 +230,7 @@ export const useAppStore = defineStore('app', {
     },
     setSelectedFleet(fleetId: string | undefined) {
       this.selectedFleet = fleetId
-    }
+    },
   },
   getters: {
     getUser: (state) => state.user,
@@ -219,32 +239,24 @@ export const useAppStore = defineStore('app', {
       return this.getAllFleets.filter((x) => x.owner.userId === this.user?.id)
     },
     getSystems: (state) => Array.from(state.systems.values()),
-    getResources: (state) =>
-      Array.from(state.resources.values()).toSorted((a, b) => a.price - b.price),
-    getShipTypes: (state) =>
-      Array.from(state.shipTypes.values()).toSorted((a, b) => a.price - b.price),
+    getResources: (state) => Array.from(state.resources.values()).toSorted((a, b) => a.price - b.price),
+    getShipTypes: (state) => Array.from(state.shipTypes.values()).toSorted((a, b) => a.price - b.price),
 
     getSystemById: (state) => (systemId: string) => state.systems.get(systemId),
     getFleetById: (state) => (fleetId: string) => state.fleets.get(fleetId),
     getResourceById: (state) => (resourceId: string) => state.resources.get(resourceId),
     getShipTypeById: (state) => (shipTypeId: string) => state.shipTypes.get(shipTypeId),
 
-    getSelectedSystem: (state) =>
-      state.selectedSystem ? state.systems.get(state.selectedSystem) : undefined,
+    getSelectedSystem: (state) => (state.selectedSystem ? state.systems.get(state.selectedSystem) : undefined),
 
     isSystemEmpty: () => (system: System) => isSystemEmpty(system),
     getCargoValue: (state) => (cargo: { [key: string]: number }) =>
-      Object.entries(cargo).reduce(
-        (sum, [type, count]) => sum + (state.resources.get(type)?.price ?? 0) * count,
-        0,
-      ),
+      Object.entries(cargo).reduce((sum, [type, count]) => sum + (state.resources.get(type)?.price ?? 0) * count, 0),
     isFleetLoading: (state) => (fleetId: string) => state.loadingFleets.has(fleetId),
 
     getSystemColor: (state) => (system: System) => getSystemColor(state.resources, system),
-    getResourceColor: (state) => (resourceId: string) =>
-      getResourceColor(state.resources, resourceId),
-    getShipTypeColor: (state) => (shipTypeId: string) =>
-      getShipTypeColor(state.shipTypes, shipTypeId),
+    getResourceColor: (state) => (resourceId: string) => getResourceColor(state.resources, resourceId),
+    getShipTypeColor: (state) => (shipTypeId: string) => getShipTypeColor(state.shipTypes, shipTypeId),
     getFleetColor: () => (fleetId: string) => getFleetColor(fleetId),
     getFleetIcon: () => (fleetId: string) => getFleetIcon(fleetId),
     getFleetName: () => (fleetId: string) => getFleetName(fleetId),

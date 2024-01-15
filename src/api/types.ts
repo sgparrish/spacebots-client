@@ -93,3 +93,43 @@ export interface PostFleetTransferToStationBody {
   resourcesFromFleetToStation?: { [key: string]: number }
   resourcesFromStationToFleet?: { [key: string]: number }
 }
+
+export interface Paginated<T> {
+  items: T[]
+  pagination: {
+    total: number
+    pageNext: string
+    pagePrevious: string
+  }
+}
+
+export interface MarketOrder {
+  quantity: number
+}
+
+export interface MarketQuote {
+  quantity: number
+  price: number
+}
+
+export interface MarketTransaction {
+  quantity: number
+  price: number
+  time: string
+}
+
+export interface MarketData {
+  sellOrders: MarketQuote[]
+  buyOrders: MarketQuote[]
+  lastTransactions: MarketTransaction[]
+}
+
+export interface PostInstantSellResponse {
+  quantitySold: number
+  creditsGained: number
+}
+
+export interface PostInstantBuyResponse {
+  quantityBought: number
+  creditsSpent: number
+}

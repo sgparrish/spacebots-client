@@ -4,6 +4,7 @@ import { storeToRefs } from 'pinia'
 
 import { Fleet } from '@/api'
 import { useAppStore } from '@/store/app'
+import { RefreshButton } from '@/components/Common'
 
 import FleetStatus from './FleetStatus.vue'
 import FleetShips from './FleetShips.vue'
@@ -40,9 +41,7 @@ watch(isSelected, () => {
       <code>{{ fleet.id }}</code>
     </template>
     <template v-slot:append>
-      <v-progress-circular v-if="store.loadingFleets.has(fleet.id)" class="button-size" indeterminate />
-      <v-btn v-if="!store.loadingFleets.has(fleet.id)" class="ma-2" variant="text" icon="mdi-refresh"
-        @click="store.fetchFleet(fleet.id)" />
+      <RefreshButton :loading="store.isFleetLoading(fleet.id)" @click="store.fetchFleet(fleet.id)" />
     </template>
     <v-divider />
     <v-card-text>
@@ -70,10 +69,6 @@ watch(isSelected, () => {
 </template>
 
 <style scoped>
-.button-size {
-  margin: 16px;
-}
-
 .status-col {
   flex-grow: 2;
   flex-shrink: 0;

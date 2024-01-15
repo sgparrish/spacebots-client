@@ -21,7 +21,11 @@ class QueuedFetch<T> {
   }
 }
 
-export default class RateLimiter {
+export interface FetchProxy {
+  Fetch<T>(url: string, options: RequestInit | undefined): Promise<T>
+}
+
+export default class RateLimiter implements FetchProxy {
   readonly maxAttempts = 3
   readonly rateLimitPolicyRegex = /^\s*(\d+)\s*;\s*w\s*=\s*(\d+)\s*/
 

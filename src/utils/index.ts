@@ -23,12 +23,8 @@ const tokenSearch = <T extends object>(
   if (tokens.length === 0) return list
 
   const scores = list.map((item, i, a) => {
-    const keys = Object.values(objectAdapter(item, i, a)).map(
-      (v) => (v?.toString().toLowerCase() ?? '') as string,
-    )
-    const matchesByToken = tokens.map((t) =>
-      keys.reduce((sum, v) => sum + (v.match(t)?.length ?? 0), 0),
-    )
+    const keys = Object.values(objectAdapter(item, i, a)).map((v) => (v?.toString().toLowerCase() ?? '') as string)
+    const matchesByToken = tokens.map((t) => keys.reduce((sum, v) => sum + (v.match(t)?.length ?? 0), 0))
     const matches = matchesByToken.filter((x) => x > 0).length
     const totalMatches = matchesByToken.reduce((sum, x) => sum + x, 0)
     return { item, matches, totalMatches }
@@ -36,9 +32,7 @@ const tokenSearch = <T extends object>(
 
   return scores
     .filter(({ matches }) => matches > 0)
-    .toSorted((a, b) =>
-      a.matches !== b.matches ? b.matches - a.matches : b.totalMatches - a.totalMatches,
-    )
+    .toSorted((a, b) => (a.matches !== b.matches ? b.matches - a.matches : b.totalMatches - a.totalMatches))
     .map(({ item }) => item)
 }
 
@@ -59,10 +53,7 @@ const RARITY_COLORS = [
 
 const RESOURCE_COLORS = new Map<string, string>()
 
-export const getResourceColor = (
-  resources: Map<string, Resource>,
-  resourceId: string | undefined,
-) => {
+export const getResourceColor = (resources: Map<string, Resource>, resourceId: string | undefined) => {
   if (resourceId === undefined) return undefined
   if (RESOURCE_COLORS.has(resourceId)) return RESOURCE_COLORS.get(resourceId)
 
@@ -95,17 +86,12 @@ export const getSystemColor = (resources: Map<string, Resource>, system: System 
 }
 
 export const isSystemEmpty = (system: System) => {
-  return (
-    !system.station?.buyShips && !system.station?.directSell && !system.asteroid?.miningResourceId
-  )
+  return !system.station?.buyShips && !system.station?.directSell && !system.asteroid?.miningResourceId
 }
 
 const SHIP_TYPE_COLORS = new Map<string, string>()
 
-export const getShipTypeColor = (
-  shipTypes: Map<string, ShipType>,
-  shipTypeId: string | undefined,
-) => {
+export const getShipTypeColor = (shipTypes: Map<string, ShipType>, shipTypeId: string | undefined) => {
   if (shipTypeId === undefined) return undefined
   if (SHIP_TYPE_COLORS.has(shipTypeId)) return SHIP_TYPE_COLORS.get(shipTypeId)
 
@@ -129,8 +115,7 @@ export const searchFleets = (fleets: Fleet[], search: string) =>
     name: getFleetName(x.id),
     owner: x.owner.userId,
     location:
-      x.locationSystemId ||
-      `${x.currentAction?.travelingFromSystemId} -> ${x.currentAction?.travelingToSystemId}`,
+      x.locationSystemId || `${x.currentAction?.travelingFromSystemId} -> ${x.currentAction?.travelingToSystemId}`,
     action: x.currentAction?.type || 'idle',
     ships: Object.entries(x.ships)
       .map((x) => x.join(' '))

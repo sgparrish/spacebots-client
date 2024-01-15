@@ -71,7 +71,6 @@ const myFleetsInSystem = computed(() => store.getMyFleets.filter(x => x.location
       </v-row>
       <v-row v-if="selectedSystem.station">
         <v-col>
-          <div class="text-subtitle-1">Market</div>
           <SystemMarketTable :system="selectedSystem" />
         </v-col>
       </v-row>
