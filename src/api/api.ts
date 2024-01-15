@@ -36,6 +36,7 @@ export class SpaceBotsApi {
     return await this.rateLimiter.Fetch(`${this.host}${url}`, {
       headers: this.getHeaders,
       mode: 'cors',
+      credentials: 'omit',
     })
   }
 
@@ -68,6 +69,7 @@ export class SpaceBotsApi {
       method: 'POST',
       headers: this.postHeaders,
       mode: 'cors',
+      credentials: 'omit',
     }
 
     if (body !== undefined && body !== null) {

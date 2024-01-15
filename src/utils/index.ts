@@ -1,13 +1,46 @@
 import colors from 'vuetify/util/colors'
 
-import { Resource, ShipType, System } from '@/api'
+import { Fleet, Resource, ShipType, System } from '@/api'
 
 import aluminium from '@/assets/aluminium.svg?url'
 import mithril from '@/assets/mithril.svg?url'
 import titanium from '@/assets/titanium.svg?url'
 import zinc from '@/assets/zinc.svg?url'
 import zirconium from '@/assets/zirconium.svg?url'
-import { getUuidColor, getUuidIcon, getUuidName } from './humanUuid'
+import { getUuidColor, getUuidAnimal, getUuidName } from './humanUuid'
+
+const tokenSearch = <T extends object>(
+  list: T[],
+  search: string,
+  objectAdapter: (e: T, i: number, a: T[]) => {} = (e) => e,
+) => {
+  const tokens = search
+    .toLowerCase()
+    .split(/\s+/)
+    .filter((t) => t.length > 2)
+    .map((t) => new RegExp(t, 'g'))
+
+  if (tokens.length === 0) return list
+
+  const scores = list.map((item, i, a) => {
+    const keys = Object.values(objectAdapter(item, i, a)).map(
+      (v) => (v?.toString().toLowerCase() ?? '') as string,
+    )
+    const matchesByToken = tokens.map((t) =>
+      keys.reduce((sum, v) => sum + (v.match(t)?.length ?? 0), 0),
+    )
+    const matches = matchesByToken.filter((x) => x > 0).length
+    const totalMatches = matchesByToken.reduce((sum, x) => sum + x, 0)
+    return { item, matches, totalMatches }
+  })
+
+  return scores
+    .filter(({ matches }) => matches > 0)
+    .toSorted((a, b) =>
+      a.matches !== b.matches ? b.matches - a.matches : b.totalMatches - a.totalMatches,
+    )
+    .map(({ item }) => item)
+}
 
 export const hexToRgb: (hex: string) => number[] = (hex) => {
   const result = /^#?([a-f\d]{2})([a-f\d]{2})([a-f\d]{2})$/i.exec(hex)
@@ -86,6 +119,23 @@ export const getShipTypeColor = (
 
 export const getFleetColor = (fleetId: string) => getUuidColor(fleetId)
 
-export const getFleetIcon = (fleetId: string) => getUuidIcon(fleetId)
+export const getFleetIcon = (fleetId: string) => getUuidAnimal(fleetId)
 
 export const getFleetName = (fleetId: string) => getUuidName(fleetId)
+
+export const searchFleets = (fleets: Fleet[], search: string) =>
+  tokenSearch(fleets, search, (x) => ({
+    id: x.id,
+    name: getFleetName(x.id),
+    owner: x.owner.userId,
+    location:
+      x.locationSystemId ||
+      `${x.currentAction?.travelingFromSystemId} -> ${x.currentAction?.travelingToSystemId}`,
+    action: x.currentAction?.type || 'idle',
+    ships: Object.entries(x.ships)
+      .map((x) => x.join(' '))
+      .join(', '),
+    cargo: Object.entries(x.cargo)
+      .map((x) => x.join(' '))
+      .join(', '),
+  }))

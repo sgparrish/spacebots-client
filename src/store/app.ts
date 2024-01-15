@@ -19,13 +19,17 @@ import {
   getFleetColor,
   getFleetIcon,
   getFleetName,
+  searchFleets,
 } from '@/utils'
+
+const firstSystem = 'omega'
 
 const SB_API = new SpaceBotsApi()
 
 export const useAppStore = defineStore('app', {
   state: () => ({
-    selectedSystem: <string | undefined>undefined,
+    selectedSystem: <string | undefined>firstSystem,
+    selectedFleet: <string | undefined>undefined,
 
     user: <User | undefined>undefined,
     fleets: new Map<string, Fleet>(),
@@ -38,7 +42,7 @@ export const useAppStore = defineStore('app', {
   actions: {
     initialFetch() {
       this.fetchUser()
-      this.fetchFleets()
+      this.fetchMyFleets()
       this.fetchSystems()
       this.fetchResources()
       this.fetchShipTypes()
@@ -46,15 +50,6 @@ export const useAppStore = defineStore('app', {
     async fetchUser() {
       try {
         this.user = await SB_API.GetUser()
-      } catch (ex) {
-        /* empty */
-      }
-    },
-    async fetchFleets() {
-      try {
-        const fleets = await SB_API.GetMyFleets()
-        this.fleets = new Map(fleets.map((f) => [f.id, f]))
-        fleets.forEach(this.scheduleFleetRefreshIfNeeded)
       } catch (ex) {
         /* empty */
       }
@@ -67,7 +62,7 @@ export const useAppStore = defineStore('app', {
         /* empty */
       }
     },
-    async fetchSystems(startSystemId: string = 'omega', maxDepth: number = 5) {
+    async fetchSystems(startSystemId: string = firstSystem, maxDepth: number = 5) {
       this.systems = new Map<string, System>()
 
       const queue = [{ id: startSystemId, depth: 0 }]
@@ -118,6 +113,15 @@ export const useAppStore = defineStore('app', {
       }
     },
 
+    async fetchMyFleets() {
+      try {
+        const fleets = await SB_API.GetMyFleets()
+        this.fleets = new Map(fleets.map((f) => [f.id, f]))
+        fleets.forEach(this.scheduleFleetRefreshIfNeeded)
+      } catch (ex) {
+        /* empty */
+      }
+    },
     async fetchFleet(fleetId: string) {
       try {
         this.loadingFleets.add(fleetId)
@@ -201,17 +205,24 @@ export const useAppStore = defineStore('app', {
       }
     },
 
-    setSelectedSystem(systemId: string[]) {
-      if (systemId.length === 0) this.selectedSystem = undefined
-      else this.selectedSystem = systemId[0]
+    setSelectedSystem(systemId: string) {
+      this.selectedSystem = systemId
     },
+    setSelectedFleet(fleetId: string | undefined) {
+      this.selectedFleet = fleetId
+    }
   },
   getters: {
     getUser: (state) => state.user,
-    getFleets: (state) => Array.from(state.fleets.values()),
+    getAllFleets: (state) => Array.from(state.fleets.values()),
+    getMyFleets(): Fleet[] {
+      return this.getAllFleets.filter((x) => x.owner.userId === this.user?.id)
+    },
     getSystems: (state) => Array.from(state.systems.values()),
-    getResources: (state) => Array.from(state.resources.values()).toSorted((a, b) => a.price - b.price),
-    getShipTypes: (state) => Array.from(state.shipTypes.values()).toSorted((a, b) => a.price - b.price),
+    getResources: (state) =>
+      Array.from(state.resources.values()).toSorted((a, b) => a.price - b.price),
+    getShipTypes: (state) =>
+      Array.from(state.shipTypes.values()).toSorted((a, b) => a.price - b.price),
 
     getSystemById: (state) => (systemId: string) => state.systems.get(systemId),
     getFleetById: (state) => (fleetId: string) => state.fleets.get(fleetId),
@@ -237,5 +248,7 @@ export const useAppStore = defineStore('app', {
     getFleetColor: () => (fleetId: string) => getFleetColor(fleetId),
     getFleetIcon: () => (fleetId: string) => getFleetIcon(fleetId),
     getFleetName: () => (fleetId: string) => getFleetName(fleetId),
+
+    searchFleets: () => (fleets: Fleet[], search: string) => searchFleets(fleets, search),
   },
 })

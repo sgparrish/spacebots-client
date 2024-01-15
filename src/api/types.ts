@@ -48,12 +48,12 @@ export enum FleetCurrentActionTypeEnum {
 export interface Fleet {
   id: string
   owner: {
-    interface: FleetOwnerTypeEnum
+    type: FleetOwnerTypeEnum
     userId: string
   }
   locationSystemId: string | null
   currentAction: {
-    interface: FleetCurrentActionTypeEnum
+    type: FleetCurrentActionTypeEnum
     finishTime?: string
     departureTime?: string
     arrivalTime?: string

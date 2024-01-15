@@ -109,12 +109,16 @@ watch(systemCount, () => {
 
 const selectedSystem = storeToRefs(store).getSelectedSystem
 const selectedNode = computed(() => (selectedSystem.value ? [selectedSystem.value.id] : []))
+
+const setSelectedSystem = (nodeIds: string[]) => {
+  if (nodeIds.length > 0) store.setSelectedSystem(nodeIds[0])
+}
 </script>
 
 <template>
   <v-network-graph ref="graphRef" class="fill-height" :selected-nodes="selectedNode" :configs="configs"
     :nodes="graph.nodes" :edges="graph.edges" :layers="graph.layers" :layouts="graph.layouts"
-    @update:selected-nodes="(nodeIds: string[]) => store.setSelectedSystem(nodeIds)">
+    @update:selected-nodes="setSelectedSystem">
     <defs>
       <filter v-for="(matrix, id) in graph.resourceColorMatrix" :id="(id as string)" :key="id">
         <feColorMatrix in="SourceGraphic" type="matrix" :values="matrix" color-interpolation-filters="sRGB" />

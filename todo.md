@@ -22,6 +22,7 @@ https://discord.gg/ATeDzSy2Wu
 9. ~~Handle dead fleets~~
 10. Better system detail display
 11. Cache things in local storage?
+    1.  How to do cache invalidation then?
 12. Market things
     1. Spread visualization?
     2. History visualization?

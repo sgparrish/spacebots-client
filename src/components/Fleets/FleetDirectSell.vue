@@ -3,16 +3,14 @@ import { ref, computed } from 'vue'
 
 import { Fleet } from '@/api'
 import { useAppStore } from '@/store/app'
-import SliderInput from '../SliderInput.vue'
+import { SliderInput } from '@/components/Common'
 
 const props = defineProps<{
   fleet: Fleet
+  disabled?: boolean
 }>()
 
 const store = useAppStore()
-const localSystem = computed(() =>
-  props.fleet.locationSystemId ? store.getSystemById(props.fleet.locationSystemId) : undefined,
-)
 
 const sellResourceOrder = ref<{ [key: string]: number }>({})
 const availableResources = computed(() =>
@@ -41,11 +39,7 @@ const performSale = () => {
 <template>
   <v-dialog width="800">
     <template v-slot:activator="{ props }">
-      <v-btn color="primary" v-bind="props" @click="resetResourceOrder()"
-        :disabled="Object.keys(fleet.cargo).length === 0" v-if="!store.isFleetLoading(fleet.id) &&
-          localSystem?.station?.directSell &&
-          fleet.currentAction === null
-          ">
+      <v-btn color="primary" v-bind="props" @click="resetResourceOrder()" :disabled="disabled">
         Direct Sell...
       </v-btn>
     </template>

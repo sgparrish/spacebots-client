@@ -25,10 +25,22 @@ const color = computed(() => store.getFleetColor(props.fleet.id))
 
 <template>
   <g :transform="`translate(${(fleetIndex + 1) * nodeRadius * scale * 2.25}, 0)`">
-    <rect :x="nodeRadius * scale * -1" :y="nodeRadius * scale * -1" :width="nodeRadius * 2 * scale"
-      :height="nodeRadius * 2 * scale" fill="rgb(18, 18, 18)" :rx="nodeRadius * 0.5 * scale" />
-    <text font-family="Material Design Icons" :font-size="nodeRadius * 1.6 * scale" :fill="color" text-anchor="middle"
-      dominant-baseline="central" style="pointer-events: none"
-      v-html="String.fromCodePoint(Number.parseInt(icon.code, 16))" />
+    <g class="fleet" @click="store.setSelectedFleet(fleet.id)">
+      <rect :x="nodeRadius * scale * -1" :y="nodeRadius * scale * -1" :width="nodeRadius * 2 * scale"
+        :height="nodeRadius * 2 * scale" fill="rgb(18, 18, 18)" :rx="nodeRadius * 0.5 * scale" />
+      <text font-family="Material Design Icons" :font-size="nodeRadius * 1.6 * scale" :fill="color" text-anchor="middle"
+        dominant-baseline="central" style="pointer-events: none"
+        v-html="String.fromCodePoint(Number.parseInt(icon.code, 16))" />
+    </g>
   </g>
 </template>
+
+<style scoped>
+.fleet {
+  transition-timing-function: ease-out;
+}
+
+.fleet:hover {
+  transform: scale(1.2, 1.2);
+}
+</style>

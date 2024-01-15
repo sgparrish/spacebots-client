@@ -3,8 +3,9 @@ import { ref, computed, watch } from 'vue'
 
 import { Fleet, PostFleetTransferBody, PostFleetTransferToStationBody } from '@/api'
 import { useAppStore } from '@/store/app'
-import SliderInput from '../SliderInput.vue'
-import TransferSelector, { TransferTarget } from '../TransferSelector.vue'
+import { SliderInput, FleetListItem, ResourceChip } from '@/components/Common'
+
+import TransferSelector, { TransferTarget } from './TransferSelector.vue'
 
 const props = defineProps<{
   fleet: Fleet
@@ -24,7 +25,7 @@ const transferTargetOptions = computed(() => {
     type: 'new-fleet',
     id: '',
   })
-  return targets.concat(store.getFleets.filter(
+  return targets.concat(store.getMyFleets.filter(
     (f) =>
       props.fleet.locationSystemId !== undefined &&
       props.fleet.locationSystemId === f.locationSystemId &&
@@ -196,12 +197,7 @@ const performTransfer = () => {
           text="Transfering all ships out of a fleet will destroy it, losing any cargo that fleet had." />
         <v-card-text>
           <div class="d-flex align-center">
-            <v-list-item :title="store.getFleetName(fleet.id)" :subtitle="fleet.id">
-              <template v-slot:prepend>
-                <v-icon style="opacity: 1" :icon="`mdi-${store.getFleetIcon(fleet.id).icon}`"
-                  :color="store.getFleetColor(fleet.id)" />
-              </template>
-            </v-list-item>
+            <FleetListItem :fleet="fleet" />
 
             <v-icon class="ma-4" size="x-large" icon="mdi-swap-horizontal-bold" />
 
@@ -232,9 +228,8 @@ const performTransfer = () => {
             </thead>
             <tbody v-if="availableResources.length > 0">
               <tr v-for="resource in availableResources" :key="resource.id">
-                <td :style="`color: ${store.getResourceColor(resource.id)}`">
-                  <v-icon :icon="`custom:${resource.id}`" />
-                  {{ resource.name }}
+                <td>
+                  <ResourceChip :resource-id="resource.id" />
                 </td>
                 <td>
                   <SliderInput :min="0" :max="resourceTotals[resource.id]" v-model="resourceTransfers[resource.id]"

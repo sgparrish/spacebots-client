@@ -3,16 +3,14 @@ import { ref, computed } from 'vue'
 
 import { Fleet } from '@/api'
 import { useAppStore } from '@/store/app'
-import SliderInput from '../SliderInput.vue'
+import { SliderInput } from '@/components/Common'
 
 const props = defineProps<{
   fleet: Fleet
+  disabled?: boolean
 }>()
 
 const store = useAppStore()
-const localSystem = computed(() =>
-  props.fleet.locationSystemId ? store.getSystemById(props.fleet.locationSystemId) : undefined,
-)
 
 const buyShipsOrder = ref<{ [key: string]: number }>({})
 const maxPurchasable = computed(() => {
@@ -53,10 +51,7 @@ const performBuy = () => {
 <template>
   <v-dialog width="800">
     <template v-slot:activator="{ props }">
-      <v-btn color="primary" v-bind="props" @click="resetShipsOrder()" v-if="!store.isFleetLoading(fleet.id) &&
-        localSystem?.station?.buyShips &&
-        fleet.currentAction === null
-        ">Buy Ships...</v-btn>
+      <v-btn color="primary" v-bind="props" @click="resetShipsOrder()" :disabled="disabled">Buy Ships...</v-btn>
     </template>
 
     <template v-slot:default="{ isActive }">

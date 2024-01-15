@@ -46,6 +46,18 @@ const MUI_ANIMALS = [
   { name: 'Snail', icon: 'snail', code: 'F1677' },
 ]
 
+const MUI_SHAPES = [
+  { name: 'Circle', icon: 'circle', code: 'F0765' },
+  { name: 'Square', icon: 'square', code: 'F0764' },
+  { name: 'Triangle', icon: 'triangle', code: 'F0536' },
+  { name: 'Diamond', icon: 'diamond', code: 'F0B8A' },
+  { name: 'Star', icon: 'star', code: 'F04CE' },
+  { name: 'Heart', icon: 'heart', code: 'F02D1' },
+  { name: 'Pentagon', icon: 'pentagon', code: 'F0701' },
+  { name: 'Hexagon', icon: 'hexagon', code: 'F02D8' },
+  { name: 'Octagon', icon: 'octagon', code: 'F03C3' },
+]
+
 const APPEARANCE_ADJECTIVES = [
   'Adorable',
   'Beautiful',
@@ -113,12 +125,12 @@ const colorIdx = uuidIndex++
 const shadeIdx = uuidIndex++
 export const getUuidColor = (uuid: string) => {
   const color = MUI_BASE_COLORS[getUuidValue(uuid, colorIdx)]
-  const shade = MUI_COLOR_SHADES[Math.floor(getUuidValue(uuid, shadeIdx) / MUI_COLOR_SHADES.length)]
+  const shade = MUI_COLOR_SHADES[getUuidValue(uuid, shadeIdx) % MUI_COLOR_SHADES.length]
   return (colors as any)[color][shade]
 }
 
 const iconIdx = uuidIndex++
-export const getUuidIcon = (uuid: string) => {
+export const getUuidAnimal = (uuid: string) => {
   return MUI_ANIMALS[getUuidValue(uuid, iconIdx)]
 }
 
@@ -141,5 +153,5 @@ export const getUuidName = (uuid: string) => {
   const adj1 = getPersonalityAdjective(uuid)
   const adj2 = getSizeAdjective(uuid)
   const adj3 = getAppearanceAdjective(uuid)
-  return `${adj1} ${adj2} ${adj3} ${getUuidIcon(uuid).name}`
+  return `${adj1} ${adj2} ${adj3} ${getUuidAnimal(uuid).name}`
 }

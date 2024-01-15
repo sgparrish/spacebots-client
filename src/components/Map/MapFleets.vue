@@ -19,10 +19,10 @@ const systemsToFleets = computed(
   () =>
     new Map(
       store.getSystems
-        .filter((s) => store.getFleets.some((f) => s.id === f.locationSystemId))
+        .filter((s) => store.getMyFleets.some((f) => s.id === f.locationSystemId))
         .map((s) => [
           s.id,
-          store.getFleets
+          store.getMyFleets
             .filter((f) => s.id === f.locationSystemId)
             .map((f) => ({
               ...f,
@@ -37,7 +37,7 @@ const systemsWithFleets = computed(() =>
   Array.from(systemsToFleets.value.keys()).map((s) => store.getSystemById(s) as System),
 )
 const travelingFleets = computed(() =>
-  store.getFleets.filter((x) => x.currentAction?.type === FleetCurrentActionTypeEnum.Traveling),
+  store.getMyFleets.filter((x) => x.currentAction?.type === FleetCurrentActionTypeEnum.Traveling),
 )
 
 let rafHandle = 0

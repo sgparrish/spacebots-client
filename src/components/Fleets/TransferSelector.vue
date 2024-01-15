@@ -44,8 +44,10 @@ const getColor = (el: TransferTarget) => {
     hide-details>
 
     <template v-slot:item="{ props: slotProps, item }">
-      <v-list-item v-bind="slotProps" :key="item.raw.id" :value="item.raw.id" :title="getTitle(item.raw)"
-        :subtitle="getSubTitle(item.raw)">
+      <v-list-item v-bind="slotProps" :key="item.raw.id" :value="item.raw.id" :title="getTitle(item.raw)">
+        <template v-slot:subtitle>
+          <code>{{ getSubTitle(item.raw) }}</code>
+        </template>
         <template v-slot:prepend>
           <v-icon style="opacity: 1" :icon="`mdi-${getIcon(item.raw)}`" :color="getColor(item.raw)" />
         </template>
@@ -53,7 +55,10 @@ const getColor = (el: TransferTarget) => {
     </template>
 
     <template v-slot:selection="{ item }">
-      <v-list-item :key="item.raw.id" :value="item.raw.id" :title="getTitle(item.raw)" :subtitle="getSubTitle(item.raw)">
+      <v-list-item :key="item.raw.id" :value="item.raw.id" :title="getTitle(item.raw)" >
+        <template v-slot:subtitle>
+          <code>{{ getSubTitle(item.raw) }}</code>
+        </template>
         <template v-slot:prepend>
           <v-icon style="opacity: 1" :icon="`mdi-${getIcon(item.raw)}`" :color="getColor(item.raw)" />
         </template>

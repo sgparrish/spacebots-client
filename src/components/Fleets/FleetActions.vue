@@ -34,21 +34,24 @@ const fleetLoading = computed(() => store.isFleetLoading(props.fleet.id))
         Travel To...
       </v-btn>
     </template>
-    <v-list v-if="fleet.currentAction === null">
+    <v-list>
       <v-list-item v-for="system in neighboringSystems" @click="store.moveFleet(fleet.id, system?.id as string)"
         :key="system?.id" :value="system?.id" :base-color="store.getSystemColor(system as System)">
         <v-list-item-title>{{ system?.name }}</v-list-item-title>
       </v-list-item>
     </v-list>
   </v-menu>
-  <v-btn v-if="!fleetLoading && localResource !== undefined && fleet.currentAction === null"
+
+  <FleetTransfer :fleet="fleet" />
+
+  <v-btn v-if="localResource !== undefined" :disabled="fleetLoading || fleet.currentAction !== null"
     @click="store.mine(fleet.id)" color="primary">
     Mine {{ localResource?.name }}
   </v-btn>
 
-  <FleetBuyShips :fleet="fleet" />
+  <FleetBuyShips :fleet="fleet" v-if="localSystem?.station?.buyShips"
+    :disabled="fleetLoading || fleet.currentAction !== null" />
 
-  <FleetDirectSell :fleet="fleet" />
-
-  <FleetTransfer :fleet="fleet" />
+  <FleetDirectSell :fleet="fleet" v-if="localSystem?.station?.directSell"
+    :disabled="fleetLoading || fleet.currentAction !== null || Object.keys(fleet.cargo).length === 0" />
 </template>
